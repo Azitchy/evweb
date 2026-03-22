@@ -1,10 +1,25 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  // Change this to your Laravel backend URL
-  static const String baseUrl = 'http://10.0.2.2:8000/api';
+  // Set this to your computer's local IP for physical device testing
+  static const String _localIp = '192.168.0.190';
+
+  static final String baseUrl = _buildBaseUrl();
+
+  static const Duration _timeout = Duration(seconds: 15);
+
+  static String _buildBaseUrl() {
+    if (kIsWeb) {
+      return 'http://localhost:8000/api';
+    }
+    // Physical devices and emulators both use the local IP
+    // 10.0.2.2 only works on Android emulator, so using actual IP works everywhere
+    return 'http://$_localIp:8000/api';
+  }
 
   Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -26,14 +41,21 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> _handleResponse(http.Response response) async {
-    final body = jsonDecode(response.body) as Map<String, dynamic>;
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return body;
+    try {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return body;
+      }
+      throw ApiException(
+        body['message'] ?? 'Something went wrong',
+        response.statusCode,
+      );
+    } on FormatException {
+      throw ApiException(
+        'Server returned an invalid response',
+        response.statusCode,
+      );
     }
-    throw ApiException(
-      body['message'] ?? 'Something went wrong',
-      response.statusCode,
-    );
   }
 
   // ── Auth ──
@@ -55,7 +77,7 @@ class ApiService {
         'password_confirmation': passwordConfirmation,
         'phone': phone,
       }),
-    );
+    ).timeout(_timeout);
     return _handleResponse(response);
   }
 
@@ -67,12 +89,13 @@ class ApiService {
       Uri.parse('$baseUrl/login'),
       headers: await _headers(auth: false),
       body: jsonEncode({'email': email, 'password': password}),
-    );
+    ).timeout(_timeout);
     return _handleResponse(response);
   }
 
   Future<void> logout() async {
-    await http.post(Uri.parse('$baseUrl/logout'), headers: await _headers());
+    await http.post(Uri.parse('$baseUrl/logout'), headers: await _headers())
+        .timeout(_timeout);
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
   }
@@ -83,7 +106,7 @@ class ApiService {
     final response = await http.get(
       Uri.parse('$baseUrl/profile'),
       headers: await _headers(),
-    );
+    ).timeout(_timeout);
     return _handleResponse(response);
   }
 

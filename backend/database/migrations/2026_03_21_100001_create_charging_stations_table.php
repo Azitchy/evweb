@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('address');
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
-            $table->enum('status', ['online', 'offline', 'maintenance'])->default('online');
+            $table->enum('status', ['active', 'inactive', 'maintenance'])->default('active');
             $table->integer('total_ports')->default(1);
             $table->integer('available_ports')->default(1);
             $table->string('charger_type')->default('Type 2'); // Type 1, Type 2, CCS, CHAdeMO

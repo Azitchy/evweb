@@ -17,7 +17,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'active' => \App\Http\Middleware\EnsureUserIsActive::class,
         ]);
 
-        $middleware->redirectGuestsTo(fn () => route('web.login'));
+        // Return JSON 401 for API requests instead of redirecting
+        $middleware->redirectGuestsTo(function ($request) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                abort(401, 'Unauthenticated.');
+            }
+            return route('web.login');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

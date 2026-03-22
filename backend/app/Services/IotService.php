@@ -88,9 +88,9 @@ class IotService
             ->count();
 
         if ($onlineDevices === 0) {
-            $station->update(['status' => 'offline']);
+            $station->update(['status' => 'inactive']);
         } else {
-            $station->update(['status' => 'online']);
+            $station->update(['status' => 'active']);
         }
 
         return $device;

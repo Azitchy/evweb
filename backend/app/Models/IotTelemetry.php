@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class IotTelemetry extends Model
 {
+    protected $table = 'iot_telemetry';
+
     protected $fillable = [
         'iot_device_id',
         'charging_session_id',
