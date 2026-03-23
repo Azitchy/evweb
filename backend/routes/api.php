@@ -16,6 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// Stations (public – guests can browse)
+Route::get('/stations', [StationController::class, 'index']);
+Route::get('/stations/nearby', [StationController::class, 'nearby']);
+Route::get('/stations/{station}', [StationController::class, 'show']);
+
 // ── Authenticated User Routes ──
 Route::middleware(['auth:sanctum', 'active'])->group(function () {
 
@@ -39,11 +44,6 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::post('/charging/{session}/stop', [ChargingController::class, 'stop']);
     Route::get('/charging/active', [ChargingController::class, 'activeSession']);
     Route::get('/charging/history', [ChargingController::class, 'history']);
-
-    // Stations
-    Route::get('/stations', [StationController::class, 'index']);
-    Route::get('/stations/nearby', [StationController::class, 'nearby']);
-    Route::get('/stations/{station}', [StationController::class, 'show']);
 
     // Payments
     Route::post('/payments/initiate', [PaymentController::class, 'initiate']);

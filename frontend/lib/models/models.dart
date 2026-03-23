@@ -40,7 +40,7 @@ class Wallet {
   factory Wallet.fromJson(Map<String, dynamic> json) {
     return Wallet(
       id: json['id'],
-      userId: json['user_id'],
+      userId: int.parse(json['user_id'].toString()),
       balance: double.parse(json['balance'].toString()),
     );
   }
@@ -74,7 +74,7 @@ class ChargingSession {
   factory ChargingSession.fromJson(Map<String, dynamic> json) {
     return ChargingSession(
       id: json['id'],
-      userId: json['user_id'],
+      userId: int.parse(json['user_id'].toString()),
       startPercentage: double.parse(json['start_percentage'].toString()),
       endPercentage: json['end_percentage'] != null
           ? double.parse(json['end_percentage'].toString())
@@ -119,9 +119,11 @@ class Transaction {
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
       id: json['id'],
-      userId: json['user_id'],
-      walletId: json['wallet_id'],
-      chargingSessionId: json['charging_session_id'],
+      userId: int.parse(json['user_id'].toString()),
+      walletId: int.parse(json['wallet_id'].toString()),
+      chargingSessionId: json['charging_session_id'] != null
+          ? int.parse(json['charging_session_id'].toString())
+          : null,
       type: json['type'],
       amount: double.parse(json['amount'].toString()),
       balanceAfter: double.parse(json['balance_after'].toString()),
@@ -170,8 +172,8 @@ class ChargingStation {
       latitude: double.parse(json['latitude'].toString()),
       longitude: double.parse(json['longitude'].toString()),
       status: json['status'],
-      totalPorts: json['total_ports'],
-      availablePorts: json['available_ports'],
+      totalPorts: int.parse(json['total_ports'].toString()),
+      availablePorts: int.parse(json['available_ports'].toString()),
       chargerType: json['charger_type'],
       powerKw: json['power_kw'] != null
           ? double.parse(json['power_kw'].toString())
@@ -212,7 +214,7 @@ class SubscriptionPlan {
       name: json['name'],
       description: json['description'],
       price: double.parse(json['price'].toString()),
-      durationDays: json['duration_days'],
+      durationDays: int.parse(json['duration_days'].toString()),
       discountPercentage: double.parse(json['discount_percentage'].toString()),
       freeChargingPercentage: double.parse(
         json['free_charging_percentage'].toString(),
@@ -248,8 +250,8 @@ class UserSubscription {
   factory UserSubscription.fromJson(Map<String, dynamic> json) {
     return UserSubscription(
       id: json['id'],
-      userId: json['user_id'],
-      subscriptionPlanId: json['subscription_plan_id'],
+      userId: int.parse(json['user_id'].toString()),
+      subscriptionPlanId: int.parse(json['subscription_plan_id'].toString()),
       startsAt: DateTime.parse(json['starts_at']),
       expiresAt: DateTime.parse(json['expires_at']),
       status: json['status'],

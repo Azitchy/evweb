@@ -15,8 +15,10 @@ class _WalletScreenState extends State<WalletScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<WalletProvider>().fetchBalance();
-    context.read<WalletProvider>().fetchTransactions();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<WalletProvider>().fetchBalance();
+      context.read<WalletProvider>().fetchTransactions();
+    });
   }
 
   void _showAddMoneyDialog() {

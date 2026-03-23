@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../providers/station_provider.dart';
 import '../models/models.dart';
 
@@ -19,7 +20,9 @@ class _StationLocatorScreenState extends State<StationLocatorScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<StationProvider>().fetchStations();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<StationProvider>().fetchStations();
+    });
   }
 
   Future<void> _findNearby() async {
@@ -139,7 +142,7 @@ class _StationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isOnline = station.status == 'online';
+    final isOnline = station.status == 'active';
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -193,6 +196,22 @@ class _StationCard extends StatelessWidget {
                           : Colors.grey.shade700,
                     ),
                   ),
+                ),
+                const SizedBox(width: 4),
+                IconButton(
+                  icon: const Icon(Icons.directions, color: Colors.blue),
+                  tooltip: 'Navigate',
+                  onPressed: () async {
+                    final url = Uri.parse(
+                      'https://www.google.com/maps/dir/?api=1&destination=${station.latitude},${station.longitude}',
+                    );
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    }
+                  },
                 ),
               ],
             ),

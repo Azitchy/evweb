@@ -16,9 +16,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   void initState() {
     super.initState();
-    final provider = context.read<SubscriptionProvider>();
-    provider.fetchPlans();
-    provider.fetchCurrentSubscription();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = context.read<SubscriptionProvider>();
+      provider.fetchPlans();
+      provider.fetchCurrentSubscription();
+    });
   }
 
   @override

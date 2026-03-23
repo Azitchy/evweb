@@ -92,8 +92,8 @@ class _ChargingScreenState extends State<ChargingScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: charging.isCharging
-                    ? Colors.orange.shade50
-                    : Colors.green.shade50,
+                    ? Colors.orange.withValues(alpha: 0.15)
+                    : Colors.green.withValues(alpha: 0.15),
                 border: Border.all(
                   color: charging.isCharging ? Colors.orange : Colors.green,
                   width: 4,
@@ -145,7 +145,7 @@ class _ChargingScreenState extends State<ChargingScreen> {
             // Active Session Info
             if (charging.isCharging) ...[
               Card(
-                color: Colors.orange.shade50,
+                color: Colors.orange.withValues(alpha: 0.15),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(

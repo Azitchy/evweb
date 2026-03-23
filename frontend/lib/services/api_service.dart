@@ -1,12 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   // Set this to your computer's local IP for physical device testing
-  static const String _localIp = '192.168.0.190';
+  static const String _localIp = 'https://evcharging.quantumtechinfo.com.np';
 
   static final String baseUrl = _buildBaseUrl();
 
@@ -14,11 +13,11 @@ class ApiService {
 
   static String _buildBaseUrl() {
     if (kIsWeb) {
-      return 'http://localhost:8000/api';
+      return 'https://evcharging.quantumtechinfo.com.np/api';
     }
     // Physical devices and emulators both use the local IP
     // 10.0.2.2 only works on Android emulator, so using actual IP works everywhere
-    return 'http://$_localIp:8000/api';
+    return '$_localIp/api';
   }
 
   Future<String?> _getToken() async {
@@ -67,17 +66,19 @@ class ApiService {
     required String passwordConfirmation,
     String? phone,
   }) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/register'),
-      headers: await _headers(auth: false),
-      body: jsonEncode({
-        'name': name,
-        'email': email,
-        'password': password,
-        'password_confirmation': passwordConfirmation,
-        'phone': phone,
-      }),
-    ).timeout(_timeout);
+    final response = await http
+        .post(
+          Uri.parse('$baseUrl/register'),
+          headers: await _headers(auth: false),
+          body: jsonEncode({
+            'name': name,
+            'email': email,
+            'password': password,
+            'password_confirmation': passwordConfirmation,
+            'phone': phone,
+          }),
+        )
+        .timeout(_timeout);
     return _handleResponse(response);
   }
 
@@ -85,16 +86,19 @@ class ApiService {
     required String email,
     required String password,
   }) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/login'),
-      headers: await _headers(auth: false),
-      body: jsonEncode({'email': email, 'password': password}),
-    ).timeout(_timeout);
+    final response = await http
+        .post(
+          Uri.parse('$baseUrl/login'),
+          headers: await _headers(auth: false),
+          body: jsonEncode({'email': email, 'password': password}),
+        )
+        .timeout(_timeout);
     return _handleResponse(response);
   }
 
   Future<void> logout() async {
-    await http.post(Uri.parse('$baseUrl/logout'), headers: await _headers())
+    await http
+        .post(Uri.parse('$baseUrl/logout'), headers: await _headers())
         .timeout(_timeout);
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
@@ -103,10 +107,9 @@ class ApiService {
   // ── Profile ──
 
   Future<Map<String, dynamic>> getProfile() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/profile'),
-      headers: await _headers(),
-    ).timeout(_timeout);
+    final response = await http
+        .get(Uri.parse('$baseUrl/profile'), headers: await _headers())
+        .timeout(_timeout);
     return _handleResponse(response);
   }
 
@@ -213,7 +216,7 @@ class ApiService {
   Future<Map<String, dynamic>> getStations() async {
     final response = await http.get(
       Uri.parse('$baseUrl/stations'),
-      headers: await _headers(),
+      headers: await _headers(auth: false),
     );
     return _handleResponse(response);
   }
@@ -227,7 +230,7 @@ class ApiService {
       Uri.parse(
         '$baseUrl/stations/nearby?latitude=$latitude&longitude=$longitude&radius=$radius',
       ),
-      headers: await _headers(),
+      headers: await _headers(auth: false),
     );
     final body = jsonDecode(response.body);
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -242,7 +245,7 @@ class ApiService {
   Future<Map<String, dynamic>> getStation(int id) async {
     final response = await http.get(
       Uri.parse('$baseUrl/stations/$id'),
-      headers: await _headers(),
+      headers: await _headers(auth: false),
     );
     return _handleResponse(response);
   }

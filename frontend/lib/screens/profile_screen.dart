@@ -156,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: _StatCard(
                       title: 'Wallet Balance',
                       value:
-                          '₹ ${(_stats!['wallet_balance'] ?? 0.0).toStringAsFixed(2)}',
+                          '₹ ${double.parse((_stats!['wallet_balance'] ?? 0).toString()).toStringAsFixed(2)}',
                       icon: Icons.account_balance_wallet,
                       color: Colors.green,
                     ),
@@ -166,7 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: _StatCard(
                       title: 'Total Spent',
                       value:
-                          '₹ ${(_stats!['total_amount_spent'] ?? 0.0).toStringAsFixed(2)}',
+                          '₹ ${double.parse((_stats!['total_amount_spent'] ?? 0).toString()).toStringAsFixed(2)}',
                       icon: Icons.payments,
                       color: Colors.red,
                     ),
@@ -180,7 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: _StatCard(
                       title: 'Total Charged',
                       value:
-                          '${(_stats!['total_charging_percentage'] ?? 0.0).toStringAsFixed(0)}%',
+                          '${double.parse((_stats!['total_charging_percentage'] ?? 0).toString()).toStringAsFixed(0)}%',
                       icon: Icons.battery_charging_full,
                       color: Colors.orange,
                     ),
